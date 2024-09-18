@@ -16,6 +16,14 @@ public class VacationPayCalculatorServiceImpl implements VacationPayCalculatorSe
 
     @Override
     public BigDecimal calculateVacationPayByDays(BigDecimal averageAnnualPay, int vacationDays) {
+        if (averageAnnualPay == null || averageAnnualPay.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Average annual pay must be greater than zero");
+        }
+
+        if (vacationDays <= 0) {
+            throw new IllegalArgumentException("Vacation days must be greater than zero");
+        }
+
         return averageAnnualPay
                 .divide(BigDecimal.valueOf(AVERAGE_DAYS_MONTH), RoundingMode.FLOOR)
                 .multiply(BigDecimal.valueOf(vacationDays));
@@ -23,10 +31,18 @@ public class VacationPayCalculatorServiceImpl implements VacationPayCalculatorSe
 
     @Override
     public BigDecimal calculateVacationPayByDate(BigDecimal averageAnnualPay,
-                                                 LocalDate startDateVacation, LocalDate endDateVacation) {
+                                                 LocalDate startDate, LocalDate endDate) {
+        if (averageAnnualPay == null || averageAnnualPay.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Average annual pay must be greater than zero");
+        }
+
+        if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+
         HolidayChecker holidayChecker = new HolidayChecker(HolidayCalendar.RUSSIA);
-        long vacationDays = ChronoUnit.DAYS.between(startDateVacation, endDateVacation) + 1;
-        long holidays = holidayChecker.getHolidaysBetweenDates(startDateVacation, endDateVacation);
+        long vacationDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        long holidays = holidayChecker.getHolidaysBetweenDates(startDate, endDate);
 
         return averageAnnualPay
                 .divide(BigDecimal.valueOf(AVERAGE_DAYS_MONTH), RoundingMode.FLOOR)

@@ -1,12 +1,10 @@
 package com.bolotov.neoflextest.util;
 
-import de.jollyday.Holiday;
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameters;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public class HolidayChecker {
 

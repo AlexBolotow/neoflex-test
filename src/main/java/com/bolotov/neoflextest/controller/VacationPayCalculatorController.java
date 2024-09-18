@@ -18,31 +18,34 @@ import java.time.LocalDate;
 @RequestMapping("vacation/pay-calculator")
 public class VacationPayCalculatorController {
 
-
     private final VacationPayCalculatorService vacationPayCalculatorService;
 
     @GetMapping("/calculate-by-days")
-    public ResponseEntity<VacationPayDTO> getVacationPayByDays(
+    public ResponseEntity<?> getVacationPayByDays(
             @RequestParam(name = "average_annual_pay") BigDecimal averageAnnualPay,
-            @RequestParam(name = "vacation_days") Integer vacationDays) {
-
-        BigDecimal pay = vacationPayCalculatorService.calculateVacationPayByDays(averageAnnualPay, vacationDays);
-        return ResponseEntity.ok(VacationPayDTO.builder()
-                .pay(pay)
-                .build());
+            @RequestParam(name = "vacation_days") int vacationDays) {
+        try {
+            BigDecimal pay = vacationPayCalculatorService.calculateVacationPayByDays(averageAnnualPay, vacationDays);
+            return ResponseEntity.ok(VacationPayDTO.builder()
+                    .pay(pay)
+                    .build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/calculate-by-date")
-    public ResponseEntity<VacationPayDTO> getVacationPayByDate(
+    public ResponseEntity<?> getVacationPayByDate(
             @RequestParam(name = "average_annual_pay") BigDecimal averageAnnualPay,
             @RequestParam(name = "start_date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam(name = "end_date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
-
-        BigDecimal pay = vacationPayCalculatorService.calculateVacationPayByDate(averageAnnualPay, startDate, endDate);
-        return ResponseEntity.ok(VacationPayDTO.builder()
-                .pay(pay)
-                .build());
+        try {
+            BigDecimal pay = vacationPayCalculatorService.calculateVacationPayByDate(averageAnnualPay, startDate, endDate);
+            return ResponseEntity.ok(VacationPayDTO.builder()
+                    .pay(pay)
+                    .build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-
-
 }
